@@ -1,39 +1,68 @@
 import { useState } from "react";
 import { Button, ScrollView, Text, View } from "react-native";
 
-import { generateMonthlyPlan } from "../src/features/plans/plan-generator";
 
-import { getPlanTasks, saveGeneratedMonthlyPlan } from "../src/database";
+import {
+    getDailyPlanProgress,
+    getPlanTasks,
+    updatePlanTaskProgress
+} from "../src/database";
 
 export default function DevPlanTest() {
   const [result, setResult] = useState("Not tested yet");
 
   async function testPlanGeneration() {
     try {
-      const plan = generateMonthlyPlan({
-        planId: "test-plan-001",
-        hijriYear: 1448,
-        hijriMonth: 9,
-        startDate: "2027-02-08",
-        daysInMonth: 29,
-        experienceLevel: "beginner",
-        selectedGoals: ["daily_prayers", "quran_reading", "daily_reflection"],
-        calendarMethod: "local_moonsighting",
-      });
+      const planId = "test-plan-001";
 
-      await saveGeneratedMonthlyPlan(plan);
+      // Retrieve the plan that was already saved.
+      const savedTasks = await getPlanTasks(planId);
 
-      const savedTasks = await getPlanTasks(plan.id);
+      if (savedTasks.length === 0) {
+        throw new Error(
+          "No saved tasks found. Generate and save the plan first.",
+        );
+      }
+
+      // Find the prayer task instead of relying on array order.
+      const prayerTask = savedTasks.find(
+        (task) => task.template_key === "track_daily_prayers",
+      );
+
+      if (!prayerTask) {
+        throw new Error("Prayer task not found.");
+      }
+
+      // Record one completed prayer.
+      await updatePlanTaskProgress(prayerTask.id, 1);
+
+      // Retrieve updated records.
+      const updatedTasks = await getPlanTasks(planId);
+
+      const updatedPrayerTask = updatedTasks.find(
+        (task) => task.id === prayerTask.id,
+      );
+
+      const dailyProgress = await getDailyPlanProgress(
+        prayerTask.scheduled_date,
+      );
 
       setResult(
         `SUCCESS
 
-Plan ID: ${plan.id}
-Generated tasks: ${plan.tasks.length}
-Saved tasks: ${savedTasks.length}
+Saved tasks: ${updatedTasks.length}
 
-First task:
-${JSON.stringify(savedTasks[0], null, 2)}`,
+Updated task:
+${updatedPrayerTask?.title_key}
+
+Completed count:
+${updatedPrayerTask?.completed_count}
+
+Task status:
+${updatedPrayerTask?.status}
+
+Daily progress:
+${JSON.stringify(dailyProgress, null, 2)}`,
       );
     } catch (error) {
       setResult(error instanceof Error ? error.message : "Unknown error");

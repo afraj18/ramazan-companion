@@ -393,3 +393,166 @@ export async function getActiveMonthlyPlan() {
      LIMIT 1`,
   );
 }
+
+export async function updatePlanTaskProgress(
+  taskId: string,
+  completedCount: number,
+): Promise<void> {
+  if (!Number.isInteger(completedCount) || completedCount < 0) {
+    throw new Error("Progress must be a non-negative whole number.");
+  }
+
+  const db = await getDatabase();
+
+  await db.withTransactionAsync(async () => {
+    const task = await db.getFirstAsync<{
+      target_count: number;
+      status: string;
+    }>(
+      `SELECT target_count, status
+       FROM plan_task_instances
+       WHERE id = ?`,
+      taskId,
+    );
+
+    if (!task) {
+      throw new Error("Task not found.");
+    }
+
+    if (task.status === "skipped") {
+      throw new Error("Restore this skipped task before updating progress.");
+    }
+
+    if (completedCount > task.target_count) {
+      throw new Error("Progress cannot exceed the task target.");
+    }
+
+    const isCompleted = completedCount >= task.target_count;
+    const now = new Date().toISOString();
+
+    await db.runAsync(
+      `UPDATE plan_task_instances
+       SET completed_count = ?,
+           status = ?,
+           completed_at = ?,
+           updated_at = ?
+       WHERE id = ?`,
+      completedCount,
+      isCompleted ? "completed" : "pending",
+      isCompleted ? now : null,
+      now,
+      taskId,
+    );
+  });
+}
+
+// skip task
+export async function skipPlanTask(taskId: string): Promise<void> {
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+
+  const result = await db.runAsync(
+    `UPDATE plan_task_instances
+     SET status = 'skipped',
+         completed_count = 0,
+         completed_at = NULL,
+         updated_at = ?
+     WHERE id = ?
+       AND status != 'skipped'`,
+    now,
+    taskId,
+  );
+
+  if (result.changes === 0) {
+    throw new Error("Task not found or already skipped.");
+  }
+}
+
+//Restore a skipped task
+export async function restorePlanTask(taskId: string): Promise<void> {
+  const db = await getDatabase();
+
+  const result = await db.runAsync(
+    `UPDATE plan_task_instances
+     SET status = 'pending',
+         completed_count = 0,
+         completed_at = NULL,
+         updated_at = ?
+     WHERE id = ?
+       AND status = 'skipped'`,
+    new Date().toISOString(),
+    taskId,
+  );
+
+  if (result.changes === 0) {
+    throw new Error("Skipped task not found.");
+  }
+}
+
+// Retrieve daily tasks and progress
+// Get tasks for a particular date
+export async function getDailyPlanTasks(date: string) {
+  const db = await getDatabase();
+
+  return db.getAllAsync<PlanTaskRecord>(
+    `SELECT *
+     FROM plan_task_instances
+     WHERE scheduled_date = ?
+     ORDER BY
+       CASE status
+         WHEN 'pending' THEN 0
+         WHEN 'completed' THEN 1
+         WHEN 'skipped' THEN 2
+       END,
+       category ASC`,
+    date,
+  );
+}
+
+// Get daily progress summary
+export interface DailyPlanProgress {
+  total: number;
+  completed: number;
+  pending: number;
+  skipped: number;
+  percentage: number;
+}
+
+export async function getDailyPlanProgress(
+  date: string,
+  planId?: string,
+): Promise<DailyPlanProgress> {
+  const db = await getDatabase();
+
+  const result = await db.getFirstAsync<{
+    total: number;
+    completed: number;
+    pending: number;
+    skipped: number;
+  }>(
+    `SELECT
+       COUNT(*) AS total,
+       SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) AS completed,
+       SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) AS pending,
+       SUM(CASE WHEN status = 'skipped' THEN 1 ELSE 0 END) AS skipped
+     FROM plan_task_instances
+     WHERE scheduled_date = ?
+       AND (? IS NULL OR monthly_plan_id = ?)`,
+    date,
+    planId ?? null,
+    planId ?? null,
+  );
+
+  const total = result?.total ?? 0;
+  const completed = result?.completed ?? 0;
+  const pending = result?.pending ?? 0;
+  const skipped = result?.skipped ?? 0;
+
+  return {
+    total,
+    completed,
+    pending,
+    skipped,
+    percentage: total > 0 ? Math.round((completed / total) * 100) : 0,
+  };
+}

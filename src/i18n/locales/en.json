@@ -15,7 +15,11 @@
       "hint": "Your activity will appear here",
       "progress": "Today's progress",
       "tasksCompleted": "Tasks completed",
-      "pointsEarned": "Points earned today"
+      "pointsEarned": "Points earned today",
+      "pending": "Pending",
+      "skipped": "Skipped",
+      "noTasksTitle": "No tasks scheduled today",
+      "noTasksDescription": "There are no tasks from your active plan scheduled for today."
     },
     "journey": {
       "title": "Continue your journey",
@@ -27,6 +31,20 @@
       "ready": "Local database ready",
       "notFound": "Database record not found",
       "failed": "Database check failed"
+    },
+    "dashboard": {
+      "loading": "Loading your dashboard...",
+      "errorTitle": "Unable to load your dashboard",
+      "errorDescription": "Please try again by leaving and reopening this screen."
+    },
+    "plan": {
+      "sectionTitle": "Your monthly journey",
+      "ramadan": "Ramadan plan",
+      "standard": "Monthly plan",
+      "hijriMonth": "Hijri {{month}} / {{year}}",
+      "activeDescription": "Your monthly plan is active. Keep working towards your selected goals.",
+      "noPlanTitle": "No monthly plan yet",
+      "noPlanDescription": "Your monthly journey will appear here once a plan has been created."
     },
     "footer": "Private by design · Works offline"
   },
@@ -59,5 +77,19 @@
     "saving": "Saving your preferences...",
     "selectGoalError": "Please select at least one goal.",
     "saveError": "We couldn't save your preferences. Please try again."
+  },
+  "tasks": {
+    "trackDailyPrayers": "Track your daily prayers",
+    "trackDailyPrayersDescription": "Keep track of your five obligatory daily prayers.",
+    "dailyQuranReading": "Read the Quran",
+    "dailyQuranReadingDescription": "Spend {{count}} minutes reading the Holy Quran.",
+    "dailyDua": "Learn or revise a Dua",
+    "dailyDuaDescription": "Learn a new supplication or revise one you already know.",
+    "dailyGoodDeed": "Perform a good deed",
+    "dailyGoodDeedDescription": "Do at least one meaningful act of kindness today.",
+    "weeklyCharity": "Give charity",
+    "weeklyCharityDescription": "Give charity or help someone in need this week.",
+    "dailyReflection": "Daily Muhasaba",
+    "dailyReflectionDescription": "Spend {{count}} minutes reflecting on your actions and intentions."
   }
 }

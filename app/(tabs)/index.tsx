@@ -1,9 +1,32 @@
-import { useEffect, useState } from "react";
+import { useFocusEffect } from "expo-router";
+import { useCallback, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 
-import { getDatabaseHealth } from "../../src/database";
+import {
+  getActiveMonthlyPlan,
+  getDailyPlanProgress,
+  getDatabaseHealth,
+  type DailyPlanProgress,
+  type MonthlyPlanRecord,
+} from "../../src/database";
 import { colors } from "../../src/theme/colors";
+
+function getLocalDate(): string {
+  const date = new Date();
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
 
 function ProgressRing({ value }: { value: number }) {
   const { t } = useTranslation();
@@ -16,24 +39,74 @@ function ProgressRing({ value }: { value: number }) {
   );
 }
 
+function StatItem({ value, label }: { value: number; label: string }) {
+  return (
+    <View style={styles.statItem}>
+      <Text style={styles.metricValue}>{value}</Text>
+      <Text style={styles.metricLabel}>{label}</Text>
+    </View>
+  );
+}
+
 export default function HomeScreen() {
   const { t } = useTranslation();
 
+  const [plan, setPlan] = useState<MonthlyPlanRecord | null>(null);
+  const [progress, setProgress] = useState<DailyPlanProgress | null>(null);
+
   const [databaseStatus, setDatabaseStatus] = useState(
-    t("home.database.checking"),
+    "home.database.checking",
   );
 
-  useEffect(() => {
-    getDatabaseHealth()
-      .then((record) => {
-        setDatabaseStatus(
-          record ? "home.database.ready" : "home.database.notFound",
-        );
-      })
-      .catch(() => {
-        setDatabaseStatus("home.database.failed");
-      });
-  }, []);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useFocusEffect(
+    useCallback(() => {
+      let mounted = true;
+
+      async function loadDashboard() {
+        try {
+          setLoading(true);
+          setError(false);
+
+          const [activePlan, databaseHealth] = await Promise.all([
+            getActiveMonthlyPlan(),
+            getDatabaseHealth(),
+          ]);
+
+          const dailyProgress = activePlan
+            ? await getDailyPlanProgress(getLocalDate(), activePlan.id)
+            : null;
+
+          if (!mounted) return;
+
+          setPlan(activePlan ?? null);
+          setProgress(dailyProgress);
+          setDatabaseStatus(
+            databaseHealth ? "home.database.ready" : "home.database.notFound",
+          );
+        } catch (err) {
+          console.error("Failed to load Home dashboard:", err);
+
+          if (mounted) {
+            setError(true);
+            setDatabaseStatus("home.database.failed");
+          }
+        } finally {
+          if (mounted) {
+            setLoading(false);
+          }
+        }
+      }
+
+      void loadDashboard();
+
+      return () => {
+        mounted = false;
+      };
+    }, []),
+  );
 
   return (
     <ScrollView style={styles.screen} contentContainerStyle={styles.content}>
@@ -72,40 +145,109 @@ export default function HomeScreen() {
         <Text style={styles.sectionHint}>{t("home.overview.hint")}</Text>
       </View>
 
-      <View style={styles.overviewCard}>
-        <ProgressRing value={0} />
-
-        <View style={styles.overviewDetails}>
-          <Text style={styles.metricValue}>0 / 0</Text>
-
-          <Text style={styles.metricLabel}>
-            {t("home.overview.tasksCompleted")}
+      {loading ? (
+        <View style={styles.stateCard}>
+          <ActivityIndicator color={colors.primary} />
+          <Text style={styles.stateText}>{t("home.dashboard.loading")}</Text>
+        </View>
+      ) : error ? (
+        <View style={styles.stateCard}>
+          <Text style={styles.emptyTitle}>
+            {t("home.dashboard.errorTitle")}
           </Text>
-
-          <View style={styles.divider} />
-
-          <Text style={styles.metricValue}>0</Text>
-
-          <Text style={styles.metricLabel}>
-            {t("home.overview.pointsEarned")}
+          <Text style={styles.emptyBody}>
+            {t("home.dashboard.errorDescription")}
           </Text>
         </View>
-      </View>
+      ) : !plan ? (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyIcon}>✦</Text>
+          <Text style={styles.emptyTitle}>{t("home.plan.noPlanTitle")}</Text>
+          <Text style={styles.emptyBody}>
+            {t("home.plan.noPlanDescription")}
+          </Text>
+        </View>
+      ) : !progress || progress.total === 0 ? (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyIcon}>☾</Text>
+          <Text style={styles.emptyTitle}>
+            {t("home.overview.noTasksTitle")}
+          </Text>
+          <Text style={styles.emptyBody}>
+            {t("home.overview.noTasksDescription")}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.overviewCard}>
+          <ProgressRing value={progress.percentage} />
 
-      {/* Continue Journey */}
+          <View style={styles.overviewDetails}>
+            <Text style={styles.metricValue}>
+              {progress.completed} / {progress.total}
+            </Text>
+
+            <Text style={styles.metricLabel}>
+              {t("home.overview.tasksCompleted")}
+            </Text>
+
+            <View style={styles.divider} />
+
+            <View style={styles.statsRow}>
+              <StatItem
+                value={progress.pending}
+                label={t("home.overview.pending")}
+              />
+
+              <StatItem
+                value={progress.skipped}
+                label={t("home.overview.skipped")}
+              />
+            </View>
+          </View>
+        </View>
+      )}
+
+      {/* Monthly Plan */}
       <View style={styles.sectionHeading}>
-        <Text style={styles.sectionTitle}>{t("home.journey.title")}</Text>
+        <Text style={styles.sectionTitle}>{t("home.plan.sectionTitle")}</Text>
       </View>
 
-      <View style={styles.emptyCard}>
-        <Text style={styles.emptyIcon}>✦</Text>
+      {loading ? (
+        <View style={styles.stateCard}>
+          <ActivityIndicator color={colors.primary} />
+        </View>
+      ) : plan ? (
+        <View style={styles.planCard}>
+          <Text style={styles.planEyebrow}>
+            {plan.plan_type === "ramadan"
+              ? t("home.plan.ramadan")
+              : t("home.plan.standard")}
+          </Text>
 
-        <Text style={styles.emptyTitle}>{t("home.journey.emptyTitle")}</Text>
+          <Text style={styles.planTitle}>
+            {t("home.plan.hijriMonth", {
+              month: plan.hijri_month,
+              year: plan.hijri_year,
+            })}
+          </Text>
 
-        <Text style={styles.emptyBody}>
-          {t("home.journey.emptyDescription")}
-        </Text>
-      </View>
+          <Text style={styles.planDates}>
+            {plan.start_date} — {plan.end_date}
+          </Text>
+
+          <Text style={styles.planDescription}>
+            {t("home.plan.activeDescription")}
+          </Text>
+        </View>
+      ) : (
+        <View style={styles.emptyCard}>
+          <Text style={styles.emptyTitle}>{t("home.plan.noPlanTitle")}</Text>
+
+          <Text style={styles.emptyBody}>
+            {t("home.plan.noPlanDescription")}
+          </Text>
+        </View>
+      )}
 
       {/* Database Status */}
       <Text style={styles.databaseStatus}>● {t(databaseStatus)}</Text>
@@ -262,6 +404,13 @@ const styles = StyleSheet.create({
     backgroundColor: colors.border,
     marginVertical: 12,
   },
+  statsRow: {
+    flexDirection: "row",
+    gap: 20,
+  },
+  statItem: {
+    flex: 1,
+  },
   emptyCard: {
     backgroundColor: colors.surface,
     borderRadius: 18,
@@ -279,6 +428,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: "700",
     marginTop: 8,
+    textAlign: "center",
   },
   emptyBody: {
     color: colors.muted,
@@ -286,6 +436,51 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     textAlign: "center",
     marginTop: 6,
+  },
+  stateCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 22,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
+  },
+  stateText: {
+    color: colors.muted,
+    fontSize: 12,
+  },
+  planCard: {
+    backgroundColor: colors.surface,
+    borderRadius: 18,
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 20,
+  },
+  planEyebrow: {
+    color: colors.primary,
+    fontSize: 10,
+    fontWeight: "700",
+    letterSpacing: 1.5,
+    textTransform: "uppercase",
+  },
+  planTitle: {
+    color: colors.text,
+    fontSize: 20,
+    fontWeight: "700",
+    marginTop: 8,
+  },
+  planDates: {
+    color: colors.muted,
+    fontSize: 12,
+    marginTop: 6,
+  },
+  planDescription: {
+    color: colors.muted,
+    fontSize: 12,
+    lineHeight: 18,
+    marginTop: 12,
   },
   databaseStatus: {
     color: colors.primary,
