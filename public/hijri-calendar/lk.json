@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "country": "LK",
+  "timezone": "Asia/Colombo",
+  "source": "ACJU",
+  "updatedAt": "2026-11-14T00:00:00.000Z",
+  "months": [
+    {
+      "hijriYear": 1448,
+      "hijriMonth": 6,
+      "startDate": "2026-11-12",
+      "status": "confirmed"
+    }
+  ]
+}
