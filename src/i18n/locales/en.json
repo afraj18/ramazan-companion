@@ -1,0 +1,63 @@
+{
+  "home": {
+    "greeting": {
+      "eyebrow": "ASSALAMU ALAIKUM",
+      "title": "Your daily journey"
+    },
+    "hero": {
+      "eyebrow": "RAMAZAN COMPANION",
+      "title": "Make today meaningful.",
+      "description": "Small, consistent steps in worship, learning and good character.",
+      "footer": "Your journey, at your pace"
+    },
+    "overview": {
+      "title": "Today's overview",
+      "hint": "Your activity will appear here",
+      "progress": "Today's progress",
+      "tasksCompleted": "Tasks completed",
+      "pointsEarned": "Points earned today"
+    },
+    "journey": {
+      "title": "Continue your journey",
+      "emptyTitle": "Your plan starts here",
+      "emptyDescription": "Goal setup and daily task planning will be added in the next milestone."
+    },
+    "database": {
+      "checking": "Checking local database…",
+      "ready": "Local database ready",
+      "notFound": "Database record not found",
+      "failed": "Database check failed"
+    },
+    "footer": "Private by design · Works offline"
+  },
+  "onboarding": {
+    "step": "STEP {{current}} OF {{total}}",
+    "welcome": "Build a better daily routine",
+    "welcomeDescription": "A personal space to track your worship, learning and good habits.",
+    "languageTitle": "Choose your language",
+    "languageDescription": "You can change this later in your profile.",
+    "levelTitle": "Where are you in your journey?",
+    "levelDescription": "We'll use this to suggest a realistic starting plan.",
+    "beginner": "Beginner",
+    "beginnerDescription": "I'm building my Islamic daily habits.",
+    "intermediate": "Intermediate",
+    "intermediateDescription": "I have some consistent habits and want to improve.",
+    "advanced": "Advanced",
+    "advancedDescription": "I want to strengthen and deepen my routine.",
+    "goalsTitle": "What would you like to focus on?",
+    "goalsDescription": "Choose the habits that matter most to you. You can change these later.",
+    "daily_prayers": "Maintain daily prayers",
+    "quran_reading": "Read the Quran regularly",
+    "daily_dua": "Learn and practice daily duas",
+    "good_character": "Improve character and habits",
+    "charity": "Give charity and help others",
+    "daily_reflection": "Reflect and review my day",
+    "selected": "{{count}} selected",
+    "back": "Back",
+    "continue": "Continue",
+    "finish": "Start my journey",
+    "saving": "Saving your preferences...",
+    "selectGoalError": "Please select at least one goal.",
+    "saveError": "We couldn't save your preferences. Please try again."
+  }
+}
