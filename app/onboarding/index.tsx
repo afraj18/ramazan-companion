@@ -2,20 +2,20 @@ import { router } from "expo-router";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
-    ActivityIndicator,
-    Pressable,
-    ScrollView,
-    StyleSheet,
-    Text,
-    View,
+  ActivityIndicator,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
 } from "react-native";
 
 import {
-    AppLanguage,
-    ExperienceLevel,
-    ONBOARDING_GOALS,
-    OnboardingGoal,
-    saveOnboarding,
+  AppLanguage,
+  ExperienceLevel,
+  ONBOARDING_GOALS,
+  OnboardingGoal,
+  saveOnboarding,
 } from "../../src/database";
 import i18n from "../../src/i18n";
 import { colors } from "../../src/theme/colors";
@@ -39,6 +39,9 @@ export default function OnboardingScreen() {
   const [language, setLanguage] = useState<AppLanguage>("en");
   const [experienceLevel, setExperienceLevel] =
     useState<ExperienceLevel>("beginner");
+
+  const [ramadanExperienceLevel, setRamadanExperienceLevel] =
+    useState<ExperienceLevel | null>(null);
 
   const [selectedGoals, setSelectedGoals] = useState<OnboardingGoal[]>([
     "daily_prayers",
@@ -142,7 +145,10 @@ export default function OnboardingScreen() {
               <OptionCard
                 key={level}
                 selected={experienceLevel === level}
-                onPress={() => setExperienceLevel(level)}
+                onPress={() => {
+                  setExperienceLevel(level);
+                  setRamadanExperienceLevel(level);
+                }}
                 title={t(`onboarding.${level}`)}
                 subtitle={t(`onboarding.${level}Description`)}
               />

@@ -3,6 +3,7 @@ import type { TaskTemplate } from "./types";
 export const TASK_CATALOG: TaskTemplate[] = [
   {
     key: "track_daily_prayers",
+    activityKey: "daily_prayers",
     goal: "daily_prayers",
     category: "prayer",
     frequency: "daily",
@@ -16,9 +17,9 @@ export const TASK_CATALOG: TaskTemplate[] = [
     unit: "prayers",
     linkedFeature: "prayer_tracker",
   },
-
   {
     key: "daily_quran_reading",
+    activityKey: "quran_reading",
     goal: "quran_reading",
     category: "quran",
     frequency: "daily",
@@ -32,9 +33,9 @@ export const TASK_CATALOG: TaskTemplate[] = [
     unit: "minutes",
     linkedFeature: "quran_tracker",
   },
-
   {
     key: "daily_dua_review",
+    activityKey: "daily_dua",
     goal: "daily_dua",
     category: "dua",
     frequency: "daily",
@@ -47,9 +48,9 @@ export const TASK_CATALOG: TaskTemplate[] = [
     },
     unit: "sessions",
   },
-
   {
     key: "daily_good_deed",
+    activityKey: "good_character",
     goal: "good_character",
     category: "character",
     frequency: "daily",
@@ -62,9 +63,9 @@ export const TASK_CATALOG: TaskTemplate[] = [
     },
     unit: "actions",
   },
-
   {
     key: "weekly_charity",
+    activityKey: "charity",
     goal: "charity",
     category: "charity",
     frequency: "weekly",
@@ -77,9 +78,9 @@ export const TASK_CATALOG: TaskTemplate[] = [
     },
     unit: "actions",
   },
-
   {
     key: "daily_muhasaba",
+    activityKey: "daily_reflection",
     goal: "daily_reflection",
     category: "reflection",
     frequency: "daily",

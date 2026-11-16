@@ -1,12 +1,18 @@
 import { useState } from "react";
 import { Button, ScrollView, Text, View } from "react-native";
 
-
 import {
     getDailyPlanProgress,
     getPlanTasks,
-    updatePlanTaskProgress
+    updatePlanTaskProgress,
 } from "../src/database";
+import {
+    getHijriDate,
+    getHijriMonths,
+    syncHijriCalendar,
+} from "../src/features/calendar/hijri-calendar";
+
+import { getDatabase, initializeDatabase } from "../src/database";
 
 export default function DevPlanTest() {
   const [result, setResult] = useState("Not tested yet");
@@ -69,6 +75,68 @@ ${JSON.stringify(dailyProgress, null, 2)}`,
     }
   }
 
+  async function testCalendarMigration() {
+    try {
+      await initializeDatabase();
+
+      const db = await getDatabase();
+
+      const columns = await db.getAllAsync<{
+        name: string;
+        type: string;
+      }>("PRAGMA table_info(hijri_months)");
+
+      console.log("Hijri calendar columns:", columns);
+
+      const migration = await db.getFirstAsync<{
+        version: number;
+        applied_at: string;
+      }>("SELECT version, applied_at FROM schema_migrations WHERE version = 4");
+
+      console.log("Migration 4:", migration);
+
+      setResult(
+        migration && columns.length > 0
+          ? `Migration 4 successful. Found ${columns.length} columns.`
+          : "Migration 4 verification failed.",
+      );
+    } catch (error) {
+      console.error("Calendar migration failed:", error);
+
+      setResult(
+        error instanceof Error ? error.message : "Calendar migration failed.",
+      );
+    }
+  }
+
+  async function testHijriCalendar() {
+    try {
+      await initializeDatabase();
+
+      const syncedCount = await syncHijriCalendar();
+      const months = await getHijriMonths();
+      const today = await getHijriDate();
+
+      console.log("Synced records:", syncedCount);
+      console.log("Cached months:", months);
+      console.log("Today's Hijri date:", today);
+
+      setResult(
+        today
+          ? `${today.hijriDay} ${today.monthName} ${today.hijriYear} AH`
+          : "No confirmed Hijri date available.",
+      );
+    } catch (error) {
+      console.error("Calendar test failed:", error);
+
+      setResult(
+        error instanceof Error
+          ? error.message
+          : "Calendar synchronization failed.",
+      );
+    }
+  }
+
   return (
     <ScrollView contentContainerStyle={{ padding: 24, gap: 20 }}>
       <Text style={{ fontSize: 24, fontWeight: "700" }}>
@@ -79,6 +147,9 @@ ${JSON.stringify(dailyProgress, null, 2)}`,
         title="Generate and Save Test Plan"
         onPress={testPlanGeneration}
       />
+      <Button title="Test Calendar Migration" onPress={testCalendarMigration} />
+
+      <Button title="Test Hijri Calendar" onPress={testHijriCalendar} />
 
       <View style={{ padding: 12, backgroundColor: "#eeeeee" }}>
         <Text selectable>{result}</Text>

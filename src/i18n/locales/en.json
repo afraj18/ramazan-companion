@@ -91,5 +91,41 @@
     "weeklyCharityDescription": "Give charity or help someone in need this week.",
     "dailyReflection": "Daily Muhasaba",
     "dailyReflectionDescription": "Spend {{count}} minutes reflecting on your actions and intentions."
+  },
+  "ramadan": {
+    "dailyTaskDescription": "Complete this Ramadan daily activity.",
+    "tasks": {
+      "thahajjudWitr": "Thahajjud / Witr",
+      "sahoorDua": "Dua & Istighfar at Sahoor",
+      "sahoorMeal": "Sahoor Meal",
+      "fajrSunnah": "Fajr Sunnah Muakkadah – 2",
+      "fajrSalah": "Fajr Salah",
+      "morningDua": "Morning Dua – Ma'thurat",
+      "quranSession1": "Quran – Session",
+      "luhaSunnah": "Luha (Duha) Sunnah",
+      "zuhurSunnah4": "Zuhur Sunnah Muakkadah – 4",
+      "zuhurSalah": "Zuhur Salah",
+      "zuhurSunnah2": "Zuhur Sunnah Muakkadah – 2",
+      "quranSession2": "Quran – Session 2",
+      "asrSalah": "Asr Salah",
+      "quranSession3": "Quran – Session 3",
+      "eveningDua": "Evening Dua – Ma'thurat",
+      "iftarDua": "Dua & Istighfar at Iftar",
+      "iftarMeal": "Iftar Meal",
+      "maghribSalah": "Maghrib Salah",
+      "maghribSunnah": "Maghrib Sunnah Muakkadah – 2",
+      "quranSession4": "Quran – Session 4",
+      "ishaSalah": "Isha Salah",
+      "ishaSunnah": "Isha Sunnah Muakkadah – 2",
+      "taraweeh": "Taraweeh",
+      "quranSession5": "Quran – Session 5",
+      "muhasaba": "End-of-day Muhasaba",
+      "istighfar": "Istighfar",
+      "duaBeforeSleep": "Dua Before Sleep",
+      "occasionalDuas": "Occasional Duas",
+      "dailySadaqah": "Daily Sadaqah",
+      "goalActivity": "Ramadan Goal Activity",
+      "extraQuranReading": "Extra Quran Reading"
+    }
   }
 }
