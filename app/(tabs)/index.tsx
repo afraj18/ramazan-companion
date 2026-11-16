@@ -50,6 +50,18 @@ function formatDate(date: string): string {
   return `${Number(day)} ${MONTHS[Number(month) - 1]} ${year}`;
 }
 
+function getPlanTitle(plan: MonthlyPlanRecord): string {
+  if (plan.plan_type === "ramadan") {
+    return "Ramadan Plan";
+  }
+
+  const month = plan.period_month
+    ? MONTHS[plan.period_month - 1]
+    : MONTHS[Number(plan.start_date.split("-")[1]) - 1];
+
+  return `${month} ${plan.period_year}`;
+}
+
 function ProgressBar({ value }: { value: number }) {
   const percentage = Math.max(0, Math.min(100, value));
 
@@ -90,12 +102,8 @@ function MonthlyPlanCard({ plan }: { plan: MonthlyPlanRecord }) {
       <Text style={styles.planEyebrow}>
         {isRamadan ? t("home.plan.ramadan") : t("home.plan.standard")}
       </Text>
-      {/* 
-      <Text style={styles.planTitle}>
-        {isRamadan
-          ? `Ramadan ${plan.hijri_year}`
-          : `Hijri ${plan.hijri_month}/${plan.hijri_year}`}
-      </Text> */}
+
+      <Text style={styles.planTitle}>{getPlanTitle(plan)}</Text>
 
       <Text style={styles.planDates}>
         {formatDate(plan.start_date)} — {formatDate(plan.end_date)}
@@ -177,9 +185,9 @@ export default function HomeScreen() {
           <Text style={styles.greeting}>{t("home.greeting.title")}</Text>
         </View>
 
-        <View style={styles.avatar}>
+        {/* <View style={styles.avatar}>
           <Text style={styles.avatarText}>R</Text>
-        </View>
+        </View> */}
       </View>
 
       {/* HERO */}
