@@ -127,5 +127,62 @@
       "goalActivity": "Ramadan Goal Activity",
       "extraQuranReading": "Extra Quran Reading"
     }
+  },
+  "profile": {
+    "eyebrow": "YOUR PERSONAL SPACE",
+    "title": "Profile",
+    "subtitle": "Your goals, progress and spiritual journey.",
+    "loading": "Loading your profile...",
+    "loadError": "Unable to load profile",
+    "loadErrorDescription": "Please reopen this screen and try again.",
+    "journey": "My Journey",
+    "journeyDescription": "Building consistency, one day at a time.",
+    "todayProgress": "Today's Progress",
+    "dailyTaskCompletion": "Your daily task completion",
+    "dailyCompletion": "Daily completion",
+    "completed": "Completed",
+    "remaining": "Remaining",
+    "skipped": "Skipped",
+    "noTasksToday": "No tasks are scheduled for today yet.",
+    "currentPlan": "Current Plan",
+    "activeRoutine": "Your active spiritual routine",
+    "ramadanPlan": "Ramadan Plan",
+    "generalMonthlyPlan": "General Monthly Plan",
+    "noActivePlan": "You don't have an active plan today.",
+    "myGoals": "My Goals",
+    "goalsDescription": "What you're working towards",
+    "manageGoals": "Manage Goals",
+    "noGoals": "No goals have been selected yet.",
+    "preferences": "Preferences",
+    "preferencesDescription": "Your current app configuration",
+    "experienceLevel": "Experience level",
+    "appLanguage": "App language",
+    "change": "Change",
+    "dataBackup": "Data & Backup",
+    "backupDescription": "Keep a copy of your app data",
+    "exportDatabase": "Export Database",
+    "exportDescription": "Create a backup of your local app data.",
+    "exportFailed": "Export failed",
+    "exportErrorDescription": "Unable to export the database. Please try again.",
+    "notAvailable": "Not available",
+    "cancel": "Cancel",
+    "levels": {
+      "beginner": "Beginner",
+      "intermediate": "Intermediate",
+      "advanced": "Advanced"
+    },
+    "goals": {
+      "dailyPrayers": "Daily Prayers",
+      "quranReading": "Quran Reading",
+      "dailyDua": "Daily Dua",
+      "goodCharacter": "Good Character",
+      "charity": "Charity & Sadaqah",
+      "dailyReflection": "Daily Reflection"
+    },
+    "languageModal": {
+      "title": "App Language",
+      "description": "Select the language you want to use throughout the app.",
+      "updateError": "Unable to update language. Please try again."
+    }
   }
 }

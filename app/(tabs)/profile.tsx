@@ -25,6 +25,7 @@ import {
   type OnboardingGoal,
 } from "../../src/database";
 
+import { useTranslation } from "react-i18next";
 import { exportDatabase } from "../../src/database/exportDatabase";
 import i18n from "../../src/i18n";
 import { colors } from "../../src/theme/colors";
@@ -49,6 +50,8 @@ const EXPERIENCE_LABELS: Record<string, string> = {
   intermediate: "Intermediate",
   advanced: "Advanced",
 };
+
+// constants for translation
 
 function getLocalDate(): string {
   const date = new Date();
@@ -121,6 +124,8 @@ export default function ProfileScreen() {
   const [showLanguageModal, setShowLanguageModal] = useState(false);
   const [savingLanguage, setSavingLanguage] = useState(false);
   const [languageError, setLanguageError] = useState("");
+
+  const { t } = useTranslation();
 
   useFocusEffect(
     useCallback(() => {
@@ -243,23 +248,21 @@ export default function ProfileScreen() {
     >
       {/* HEADER */}
       <View style={styles.header}>
-        <Text style={styles.eyebrow}>YOUR PERSONAL SPACE</Text>
-        <Text style={styles.title}>Profile</Text>
-        <Text style={styles.subtitle}>
-          Your goals, progress and spiritual journey.
-        </Text>
+        <Text style={styles.eyebrow}>{t("profile.eyebrow")}</Text>
+        <Text style={styles.title}>{t("profile.title")}</Text>
+        <Text style={styles.subtitle}>{t("profile.subtitle")}</Text>
       </View>
 
       {loading ? (
         <View style={styles.stateCard}>
           <ActivityIndicator color={colors.primary} />
-          <Text style={styles.stateText}>Loading your profile...</Text>
+          <Text style={styles.stateText}>{t("profile.loading")}</Text>
         </View>
       ) : error ? (
         <View style={styles.stateCard}>
-          <Text style={styles.errorTitle}>Unable to load profile</Text>
+          <Text style={styles.errorTitle}>{t("profile.loadError")}</Text>
           <Text style={styles.stateText}>
-            Please reopen this screen and try again.
+            {t("profile.loadErrorDescription")}{" "}
           </Text>
         </View>
       ) : (
@@ -271,9 +274,9 @@ export default function ProfileScreen() {
             </View>
 
             <View style={styles.profileInfo}>
-              <Text style={styles.profileName}>My Journey</Text>
+              <Text style={styles.profileName}>{t("profile.journey")}</Text>
               <Text style={styles.profileDescription}>
-                Building consistency, one day at a time.
+                {t("profile.journeyDescription")}{" "}
               </Text>
             </View>
 
@@ -286,8 +289,8 @@ export default function ProfileScreen() {
 
           {/* TODAY'S PROGRESS */}
           <SectionHeading
-            title="Today's Progress"
-            subtitle="Your daily task completion"
+            title={t("profile.todayProgress")}
+            subtitle={t("profile.dailyTaskCompletion")}
           />
 
           <View style={styles.card}>
@@ -298,7 +301,9 @@ export default function ProfileScreen() {
                     <Text style={styles.progressValue}>
                       {progress.percentage}%
                     </Text>
-                    <Text style={styles.mutedText}>Daily completion</Text>
+                    <Text style={styles.mutedText}>
+                      {t("profile.dailyCompletion")}
+                    </Text>
                   </View>
 
                   <View style={styles.completionBadge}>
@@ -313,31 +318,33 @@ export default function ProfileScreen() {
                 <View style={styles.statsRow}>
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>{progress.completed}</Text>
-                    <Text style={styles.statLabel}>Completed</Text>
+                    <Text style={styles.statLabel}>
+                      {t("profile.completed")}
+                    </Text>
                   </View>
 
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>{progress.pending}</Text>
-                    <Text style={styles.statLabel}>Remaining</Text>
+                    <Text style={styles.statLabel}>
+                      {t("profile.remaining")}
+                    </Text>
                   </View>
 
                   <View style={styles.statItem}>
                     <Text style={styles.statValue}>{progress.skipped}</Text>
-                    <Text style={styles.statLabel}>Skipped</Text>
+                    <Text style={styles.statLabel}>{t("profile.skipped")}</Text>
                   </View>
                 </View>
               </>
             ) : (
-              <Text style={styles.emptyText}>
-                No tasks are scheduled for today yet.
-              </Text>
+              <Text style={styles.emptyText}>{t("profile.noTasksToday")}</Text>
             )}
           </View>
 
           {/* CURRENT PLAN */}
           <SectionHeading
-            title="Current Plan"
-            subtitle="Your active spiritual routine"
+            title={t("profile.currentPlan")}
+            subtitle={t("profile.activeRoutine")}
           />
 
           <View style={styles.card}>
@@ -363,16 +370,14 @@ export default function ProfileScreen() {
                 </View>
               </>
             ) : (
-              <Text style={styles.emptyText}>
-                You don't have an active plan today.
-              </Text>
+              <Text style={styles.emptyText}>{t("profile.noActivePlan")} </Text>
             )}
           </View>
 
           {/* GOALS */}
           <SectionHeading
-            title="My Goals"
-            subtitle="What you're working towards"
+            title={t("profile.myGoals")}
+            subtitle={t("profile.goalsDescription")}
           />
 
           <View style={styles.card}>
@@ -392,31 +397,34 @@ export default function ProfileScreen() {
                   onPress={() => router.push("/goals")}
                   accessibilityRole="button"
                 >
-                  <Text style={styles.manageGoalsText}>Manage Goals</Text>
+                  <Text style={styles.manageGoalsText}>
+                    {t("profile.manageGoals")}
+                  </Text>
                   <Text style={styles.manageGoalsArrow}>→</Text>
                 </Pressable>
               </View>
             ) : (
-              <Text style={styles.emptyText}>
-                No goals have been selected yet.
-              </Text>
+              <Text style={styles.emptyText}>{t("profile.noGoals")} </Text>
             )}
           </View>
 
           {/* PREFERENCES */}
           <SectionHeading
-            title="Preferences"
-            subtitle="Your current app configuration"
+            title={t("profile.preferences")}
+            subtitle={t("profile.preferencesDescription")}
           />
 
           <View style={styles.card}>
-            <InfoRow label="Experience level" value={experienceLevel} />
+            <InfoRow
+              label={t("profile.experienceLevel")}
+              value={experienceLevel}
+            />
 
             <View style={styles.infoDivider} />
 
             <View style={styles.languageRow}>
               <View>
-                <Text style={styles.infoLabel}>App language</Text>
+                <Text style={styles.infoLabel}>{t("profile.appLanguage")}</Text>
                 <Text style={styles.languageValue}>{language}</Text>
               </View>
 
@@ -428,14 +436,16 @@ export default function ProfileScreen() {
                 }}
                 accessibilityRole="button"
               >
-                <Text style={styles.changeLanguageText}>Change</Text>
+                <Text style={styles.changeLanguageText}>
+                  {t("profile.change")}
+                </Text>
               </Pressable>
             </View>
           </View>
           {/* DATA & BACKUP */}
           <SectionHeading
-            title="Data & Backup"
-            subtitle="Keep a copy of your app data"
+            title={t("profile.dataBackup")}
+            subtitle={t("profile.backupDescription")}
           />
 
           <Pressable
@@ -454,9 +464,11 @@ export default function ProfileScreen() {
               <>
                 <Text style={styles.exportIcon}>↓</Text>
                 <View style={styles.exportInfo}>
-                  <Text style={styles.exportTitle}>Export Database</Text>
+                  <Text style={styles.exportTitle}>
+                    {t("profile.backupDescription")}
+                  </Text>
                   <Text style={styles.exportDescription}>
-                    Create a backup of your local app data.
+                    {t("profile.exportDescription")}{" "}
                   </Text>
                 </View>
                 <Text style={styles.exportArrow}>→</Text>
@@ -479,10 +491,12 @@ export default function ProfileScreen() {
       >
         <View style={styles.modalOverlay}>
           <View style={styles.languageModal}>
-            <Text style={styles.modalTitle}>App Language</Text>
+            <Text style={styles.modalTitle}>
+              {t("profile.languageModal.title")}
+            </Text>
 
             <Text style={styles.modalDescription}>
-              Select the language you want to use throughout the app.
+              {t("profile.languageModal.description")}
             </Text>
 
             {(
@@ -535,7 +549,7 @@ export default function ProfileScreen() {
               onPress={() => setShowLanguageModal(false)}
               disabled={savingLanguage}
             >
-              <Text style={styles.cancelButtonText}>Cancel</Text>
+              <Text style={styles.cancelButtonText}>{t("profile.cancel")}</Text>
             </Pressable>
           </View>
         </View>

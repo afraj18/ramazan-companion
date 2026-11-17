@@ -91,5 +91,62 @@
     "weeklyCharityDescription": "මෙම සතියේ සදකා කරන්න හෝ අවශ්‍යතාවයක් ඇති අයෙකුට උපකාර කරන්න.",
     "dailyReflection": "දෛනික මුහාසබා",
     "dailyReflectionDescription": "ඔබගේ ක්‍රියාවන් සහ අරමුණු පිළිබඳව සිතා බැලීමට විනාඩි {{count}}ක් වෙන් කරන්න."
+  },
+  "profile": {
+    "eyebrow": "ඔබේ පුද්ගලික අවකාශය",
+    "title": "පැතිකඩ",
+    "subtitle": "ඔබේ අරමුණු, ප්‍රගතිය සහ ආධ්‍යාත්මික ගමන.",
+    "loading": "ඔබේ පැතිකඩ පූරණය වෙමින් පවතී...",
+    "loadError": "පැතිකඩ පූරණය කළ නොහැක",
+    "loadErrorDescription": "මෙම පිටුව නැවත විවෘත කර උත්සාහ කරන්න.",
+    "journey": "මගේ ගමන",
+    "journeyDescription": "සෑම දිනකම අඛණ්ඩව ඉදිරියට යමු.",
+    "todayProgress": "අද ප්‍රගතිය",
+    "dailyTaskCompletion": "ඔබේ දෛනික කාර්යයන් සම්පූර්ණ කිරීම",
+    "dailyCompletion": "දෛනික සම්පූර්ණ කිරීම",
+    "completed": "සම්පූර්ණ කළ",
+    "remaining": "ඉතිරි",
+    "skipped": "මඟහැරුණු",
+    "noTasksToday": "අද දින සඳහා කිසිදු කාර්යයක් සැලසුම් කර නොමැත.",
+    "currentPlan": "වත්මන් සැලැස්ම",
+    "activeRoutine": "ඔබේ වත්මන් ආධ්‍යාත්මික දෛනික පිළිවෙත",
+    "ramadanPlan": "රමදාන් සැලැස්ම",
+    "generalMonthlyPlan": "සාමාන්‍ය මාසික සැලැස්ම",
+    "noActivePlan": "අද දින සඳහා සක්‍රිය සැලැස්මක් නොමැත.",
+    "myGoals": "මගේ අරමුණු",
+    "goalsDescription": "ඔබ ළඟා වීමට උත්සාහ කරන අරමුණු",
+    "manageGoals": "අරමුණු කළමනාකරණය",
+    "noGoals": "තවමත් කිසිදු අරමුණක් තෝරාගෙන නොමැත.",
+    "preferences": "මනාප",
+    "preferencesDescription": "ඔබේ වත්මන් යෙදුම් සැකසුම්",
+    "experienceLevel": "අත්දැකීම් මට්ටම",
+    "appLanguage": "යෙදුමේ භාෂාව",
+    "change": "වෙනස් කරන්න",
+    "dataBackup": "දත්ත සහ උපස්ථය",
+    "backupDescription": "ඔබේ යෙදුම් දත්තවල පිටපතක් තබාගන්න",
+    "exportDatabase": "දත්ත සමුදාය අපනයනය කරන්න",
+    "exportDescription": "ඔබේ යෙදුම් දත්තවල උපස්ථයක් සාදන්න.",
+    "exportFailed": "අපනයනය අසාර්ථක විය",
+    "exportErrorDescription": "දත්ත සමුදාය අපනයනය කළ නොහැක. නැවත උත්සාහ කරන්න.",
+    "notAvailable": "ලබා ගත නොහැක",
+    "cancel": "අවලංගු කරන්න",
+    "levels": {
+      "beginner": "ආරම්භක",
+      "intermediate": "මධ්‍යම",
+      "advanced": "උසස්"
+    },
+    "goals": {
+      "dailyPrayers": "දෛනික සලාතය",
+      "quranReading": "අල් කුර්ආනය කියවීම",
+      "dailyDua": "දෛනික දුආ",
+      "goodCharacter": "යහපත් චරිත ගුණාංග",
+      "charity": "පරිත්‍යාග සහ සදකා",
+      "dailyReflection": "දෛනික ස්වයං විමර්ශනය"
+    },
+    "languageModal": {
+      "title": "යෙදුමේ භාෂාව",
+      "description": "යෙදුම පුරා භාවිත කිරීමට කැමති භාෂාව තෝරන්න.",
+      "updateError": "භාෂාව වෙනස් කළ නොහැක. නැවත උත්සාහ කරන්න."
+    }
   }
 }
