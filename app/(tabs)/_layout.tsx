@@ -34,12 +34,12 @@ export default function TabLayout() {
         options={{ title: "Tasks", tabBarIcon: tabIcon("☷") }}
       />
       <Tabs.Screen
-        name="quran"
-        options={{ title: "Quran", tabBarIcon: tabIcon("۞") }}
-      />
-      <Tabs.Screen
         name="rewards"
         options={{ title: "Rewards", tabBarIcon: tabIcon("✧") }}
+      />
+      <Tabs.Screen
+        name="analytics"
+        options={{ title: "Analytics", tabBarIcon: tabIcon("۞") }}
       />
       <Tabs.Screen
         name="profile"

@@ -80,10 +80,13 @@ export default function RootLayout() {
   }
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
+    <Stack
+      screenOptions={{ headerShown: false, animation: "fade_from_bottom" }}
+    >
       <Stack.Screen name="index" />
       <Stack.Screen name="onboarding" />
       <Stack.Screen name="create-plan" />
+      <Stack.Screen name="goals" />
       <Stack.Screen name="(tabs)" />
     </Stack>
   );

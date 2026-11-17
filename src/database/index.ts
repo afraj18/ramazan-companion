@@ -178,6 +178,44 @@ export async function getSelectedGoals(): Promise<OnboardingGoal[]> {
     );
 }
 
+/**
+ * Replace the user's selected goals without modifying other app settings.
+ */
+export async function updateSelectedGoals(
+  goals: OnboardingGoal[],
+): Promise<void> {
+  const uniqueGoals = [...new Set(goals)];
+
+  if (uniqueGoals.length === 0) {
+    throw new Error("Select at least one goal.");
+  }
+
+  const invalidGoal = uniqueGoals.find(
+    (goal) => !ONBOARDING_GOALS.includes(goal),
+  );
+
+  if (invalidGoal) {
+    throw new Error(`Invalid goal: ${invalidGoal}`);
+  }
+
+  const db = await getDatabase();
+  const now = new Date().toISOString();
+
+  await db.withTransactionAsync(async () => {
+    await db.runAsync("DELETE FROM user_goals");
+
+    for (const goal of uniqueGoals) {
+      await db.runAsync(
+        `INSERT INTO user_goals (id, goal_key, created_at)
+         VALUES (?, ?, ?)`,
+        goal,
+        goal,
+        now,
+      );
+    }
+  });
+}
+
 export async function getDatabaseHealth() {
   const db = await getDatabase();
 
@@ -892,5 +930,110 @@ export async function updatePlanStatus(
 
   if (result.changes === 0) {
     throw new Error(`Plan not found: ${planId}`);
+  }
+}
+
+export interface DailyAnalyticsRecord {
+  date: string;
+  total: number;
+  completed: number;
+  pending: number;
+  skipped: number;
+  percentage: number;
+}
+
+export async function getPlanDailyAnalytics(
+  planId: string,
+  startDate: string,
+  endDate: string,
+): Promise<DailyAnalyticsRecord[]> {
+  validateActivityDate(startDate);
+  validateActivityDate(endDate);
+
+  if (startDate > endDate) {
+    throw new Error("Start date cannot be after end date.");
+  }
+
+  const db = await getDatabase();
+
+  const rows = await db.getAllAsync<{
+    date: string;
+    total: number;
+    completed: number;
+    pending: number;
+    skipped: number;
+  }>(
+    `SELECT
+       task.scheduled_date AS date,
+       COUNT(*) AS total,
+
+       COALESCE(SUM(
+         CASE
+           WHEN task.status != 'skipped'
+             AND COALESCE(activity.completed_count, 0) >= task.target_count
+           THEN 1 ELSE 0
+         END
+       ), 0) AS completed,
+
+       COALESCE(SUM(
+         CASE
+           WHEN task.status != 'skipped'
+             AND COALESCE(activity.completed_count, 0) < task.target_count
+           THEN 1 ELSE 0
+         END
+       ), 0) AS pending,
+
+       COALESCE(SUM(
+         CASE
+           WHEN task.status = 'skipped'
+           THEN 1 ELSE 0
+         END
+       ), 0) AS skipped
+
+     FROM plan_task_instances task
+
+     LEFT JOIN daily_activity_records activity
+       ON activity.activity_key = task.activity_key
+       AND activity.activity_date = task.scheduled_date
+
+     WHERE task.monthly_plan_id = ?
+       AND task.scheduled_date >= ?
+       AND task.scheduled_date <= ?
+
+     GROUP BY task.scheduled_date
+     ORDER BY task.scheduled_date ASC`,
+    planId,
+    startDate,
+    endDate,
+  );
+
+  return rows.map((row) => ({
+    ...row,
+    percentage:
+      row.total - row.skipped > 0
+        ? Math.round((row.completed / (row.total - row.skipped)) * 100)
+        : 0,
+  }));
+}
+
+export async function updateAppLanguage(language: AppLanguage): Promise<void> {
+  if (!["en", "ta", "si"].includes(language)) {
+    throw new Error("Invalid app language.");
+  }
+
+  const db = await getDatabase();
+
+  const result = await db.runAsync(
+    `UPDATE app_settings
+     SET language = ?,
+         updated_at = ?
+     WHERE id = ?`,
+    language,
+    new Date().toISOString(),
+    SETTINGS_ID,
+  );
+
+  if (result.changes === 0) {
+    throw new Error("App settings not found.");
   }
 }
